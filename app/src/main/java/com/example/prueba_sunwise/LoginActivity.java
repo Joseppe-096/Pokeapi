@@ -89,7 +89,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         SharedPreferences preferences = getSharedPreferences("UsuarioPref",MODE_PRIVATE);
         String correo = preferences.getString("Correo", "");
         String password = preferences.getString("Password", "");
-        Log.e("Preferencias", "Correo: "+correo);
         if(correo.isEmpty() && password.isEmpty()){
 
         }else
