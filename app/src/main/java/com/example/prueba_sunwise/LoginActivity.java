@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,7 +39,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         loginPresenter = new LoginPresenter(this);
         loginPresenter.setProgressBarVisiblity(View.INVISIBLE);
 
-
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -46,9 +46,11 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
                 String password = edtPassword.getText().toString();
                 loginPresenter.setProgressBarVisiblity(View.VISIBLE);
                 loginPresenter.onLogin(correo, password);
-                GuardarPreferencias(correo,password);
+                GuardarPreferencias(correo, password);
             }
         });
+
+        CargarPreferencias();
     }
 
     @Override
@@ -57,6 +59,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             Toast.makeText(this, "Bienvenido...", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            finish();
         }
         else
             Toast.makeText(this, "Datos incorrectos" + code, Toast.LENGTH_LONG).show();
@@ -75,23 +78,25 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        CargarPreferencias();
-    }
     private void GuardarPreferencias(String correo, String password){
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("UsuarioPref",MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("Correo", correo);
         editor.putString("Password", password);
         editor.commit();
     }
     private void CargarPreferencias(){
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("UsuarioPref",MODE_PRIVATE);
         String correo = preferences.getString("Correo", "");
         String password = preferences.getString("Password", "");
-        edtPassword.setText(password);
-        edtCorreo.setText(correo);
+        Log.e("Preferencias", "Correo: "+correo);
+        if(correo.isEmpty() && password.isEmpty()){
+
+        }else
+        {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 }
