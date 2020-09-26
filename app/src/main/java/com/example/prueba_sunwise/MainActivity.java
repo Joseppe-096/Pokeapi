@@ -11,12 +11,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.prueba_sunwise.Model.IpokemonApi;
-import com.example.prueba_sunwise.Model.pokemon;
+import com.example.prueba_sunwise.Model.Pokemon;
 import com.example.prueba_sunwise.Presenter.AdapterPokemon;
-import com.example.prueba_sunwise.Presenter.pokemonRespuesta;
+import com.example.prueba_sunwise.Model.PokemonRespuesta;
 
 import java.util.ArrayList;
 
@@ -31,49 +32,68 @@ public class MainActivity extends AppCompatActivity {
     private Retrofit retrofit;
     private RecyclerView rcvPokemon;
     private AdapterPokemon adapterPokemon;
+    private int offset;
+    private boolean CargarMas;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         rcvPokemon = findViewById(R.id.rcvPokemon);
+        adapterPokemon = new AdapterPokemon();
+        rcvPokemon.setAdapter(adapterPokemon);
         rcvPokemon.setHasFixedSize(true);
-        rcvPokemon.setLayoutManager(new LinearLayoutManager(this));
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rcvPokemon.setLayoutManager(layoutManager);
+        rcvPokemon.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(dy > 0){
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
+                    if(CargarMas){
+                        if((visibleItemCount + pastVisibleItems) >= totalItemCount){
+                            Log.i("Final", " Llego al final.");
+                            CargarMas = false;
+                            offset += 20;
+                            obtenerDatosPokemon(offset);
+                        }
+                    }
+                }
+            }
+        });
 
         //Consume la API de pokemon
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://pokeapi.co/api/v2/")
+                .baseUrl("http://pokeapi.co/api/v2/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        obtenerDatosPokemon();
+        offset = 0;
+        obtenerDatosPokemon(offset);
     }
-    private void obtenerDatosPokemon(){
+    private void obtenerDatosPokemon(int offset){
         IpokemonApi ipokemonApi = retrofit.create(IpokemonApi.class);
-        Call<pokemonRespuesta> respuestaCall = ipokemonApi.obtenerListaPokemon();
-        respuestaCall.enqueue(new Callback<pokemonRespuesta>() {
+        Call<PokemonRespuesta> respuestaCall = ipokemonApi.obtenerListaPokemon(20, offset);
+        respuestaCall.enqueue(new Callback<PokemonRespuesta>() {
             @Override
-            public void onResponse(Call<pokemonRespuesta> call, Response<pokemonRespuesta> response) {
+            public void onResponse(Call<PokemonRespuesta> call, Response<PokemonRespuesta> response) {
+                CargarMas = true;
                 if(response.isSuccessful()){
-                    try {
-                        pokemonRespuesta pokemonR = response.body();
-                        ArrayList<pokemon> listPokemon = pokemonR.getResult();
-                        for(int i = 0; i < listPokemon.size(); i++){
-                            pokemon p = listPokemon.get(i);
-                            Log.e("Recycler", ""+ p.getName());
-                        }
-                    }catch (Exception e){}
-
-                    //adapterPokemon = new AdapterPokemon(listDatos);
-                    //rcvPokemon.setAdapter(adapterPokemon);
+                    PokemonRespuesta pokemonR = response.body();
+                     ArrayList<Pokemon> listPokemon = pokemonR.getResults();
+                     adapterPokemon.adicionarListaPokemon(listPokemon);
                 }else{
-                    Log.e("Recycler", ""+ response.errorBody());
+                    Log.e("onResponse", ""+ response.errorBody());
                 }
             }
 
             @Override
-            public void onFailure(Call<pokemonRespuesta> call, Throwable t) {
-
+            public void onFailure(Call<PokemonRespuesta> call, Throwable t) {
+                CargarMas = true;
+                Log.e("onFailure", ""+ t.getMessage());
             }
         });
     }

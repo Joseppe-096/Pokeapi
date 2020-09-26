@@ -8,16 +8,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.prueba_sunwise.Model.pokemon;
+import com.example.prueba_sunwise.Model.Pokemon;
 import com.example.prueba_sunwise.R;
 
 import java.util.ArrayList;
 
 public class AdapterPokemon extends RecyclerView.Adapter<AdapterPokemon.menuViewHolder> {
-    private ArrayList<pokemon> list;
+    private ArrayList<Pokemon> list;
 
-    public AdapterPokemon(ArrayList<pokemon> list) {
-        this.list = list;
+    public AdapterPokemon() {
+        list = new ArrayList<>();
     }
 
     @NonNull
@@ -29,13 +29,17 @@ public class AdapterPokemon extends RecyclerView.Adapter<AdapterPokemon.menuView
 
     @Override
     public void onBindViewHolder(@NonNull menuViewHolder holder, int position) {
-        pokemon oPokemon = list.get(position);
-        holder.getTxtNombrePokemon().setText(oPokemon.getName());
+        Pokemon oPokemon = list.get(position);
+        holder.txtNombrePokemon.setText(oPokemon.getName());
     }
 
     @Override
     public int getItemCount() {
         return list.size();
+    }
+    public void adicionarListaPokemon(ArrayList<Pokemon> listaPokemon) {
+        list.addAll(listaPokemon);
+        notifyDataSetChanged();
     }
     public static class menuViewHolder extends RecyclerView.ViewHolder{
         private TextView txtNombrePokemon;
@@ -43,9 +47,6 @@ public class AdapterPokemon extends RecyclerView.Adapter<AdapterPokemon.menuView
         public menuViewHolder(@NonNull View itemView) {
             super(itemView);
             txtNombrePokemon = itemView.findViewById(R.id.txtNombrePokemon);
-        }
-        public TextView getTxtNombrePokemon() {
-            return txtNombrePokemon;
         }
     }
 }

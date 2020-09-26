@@ -1,12 +1,8 @@
 package com.example.prueba_sunwise.Model;
 
-public class pokemon {
+public class Pokemon {
     private String name;
     private String url;
-
-    public pokemon(String name) {
-        this.name = name;
-    }
 
     public String getName() {
         return name;
