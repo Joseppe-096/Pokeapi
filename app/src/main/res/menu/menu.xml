@@ -3,10 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/btnGuardarP"
+        android:title="Guardar"
+        android:tooltipText="Guardar pokemons"
+        android:icon="@drawable/save"
+        app:showAsAction="ifRoom">
+    </item>
+    <item
     android:id="@+id/menu_principal"
     android:icon="@drawable/ic_baseline_exit_to"
     android:title="Cerrar sesión"
     android:tooltipText="Cerrar sesión"
     app:showAsAction="ifRoom">
     </item>
+
 </menu>
