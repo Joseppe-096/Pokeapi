@@ -144,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btnGuardarP:
                 guardarPokemonsLocal();
-                getActionBar().setDisplayUseLogoEnabled(false);
                 return true;
         }
         return super.onOptionsItemSelected(item);

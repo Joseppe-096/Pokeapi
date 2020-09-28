@@ -7,13 +7,15 @@
         android:title="Guardar"
         android:tooltipText="Guardar pokemons"
         android:icon="@drawable/save"
+        android:iconTint="@color/cardview_light_background"
         app:showAsAction="ifRoom">
     </item>
     <item
     android:id="@+id/menu_principal"
     android:icon="@drawable/ic_baseline_exit_to"
-    android:title="Cerrar sesión"
-    android:tooltipText="Cerrar sesión"
+        android:iconTint="@color/cardview_light_background"
+    android:title="@string/CerrarSesion"
+    android:tooltipText="@string/CerrarSesion"
     app:showAsAction="ifRoom">
     </item>
 

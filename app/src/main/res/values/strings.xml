@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Prueba_Sunwise</string>
+    <string name="CerrarSesion">Cerrar sesión</string>
 </resources>
